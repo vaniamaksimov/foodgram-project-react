@@ -1,0 +1,59 @@
+[tool.black]
+line-length = 79
+
+[tool.isort]
+skip = [
+    '.gitignore',
+    '.dockerignore',
+    'env',
+    'venv',
+    ]
+extend_skip = [
+    '.md',
+    '.json',
+    ]
+known_local_folder = [
+    'api',
+    'foodgramm',
+    'recipes',
+    'users',
+    'cart',
+    'app'
+    ]
+
+[tool.flake8]
+ignore = [
+    'W503',
+    'E501',
+    ]
+exclude = [
+    'tests/',
+    '*/migrations/',
+    'venv/',
+    'env/',
+    ]
+per-file-ignores = [
+    '*/settings.py:E501',
+    ]
+max-complexity = 10
+
+[tool.pytest.ini_options]
+django_find_project = 'true'
+pythonpath = '. backend'
+DJANGO_SETTINGS_MODULE = 'foodgram.settings'
+norecursedirs = [
+    'env/*',
+    'venv',
+]
+addopts = [
+    '-vv',
+    '-p',
+    'no:cacheprovider',
+]
+testpaths = 'backend/tests/'
+python_files = [
+    'test_*.py',
+    '*_tests.py',
+    'tests.py',
+    'tests_*.py',
+]
