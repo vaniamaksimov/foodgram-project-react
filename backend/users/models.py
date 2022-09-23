@@ -8,16 +8,35 @@ from core.validators import not_me_in_username_validator
 
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, password, **extra_fields):
+    def create_user(
+        self, email, password, first_name, last_name, username, **extra_fields
+    ):
         if not email:
             raise ValueError("Необходимо предоставить Email")
+        if not password:
+            raise ValueError("Необходимо предоставить пароль")
+        if not first_name:
+            raise ValueError("Необходимо предоставить имя")
+        if not last_name:
+            raise ValueError("Необходимо предоставить фамилию")
+        if not username:
+            raise ValueError("Необходимо предоставить никнейм")
         email = self.normalize_email(email=email)
-        user = self.model(email=email, **extra_fields)
+        user = self.model(
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            **extra_fields,
+        )
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(
+        self, email, password, first_name, last_name, username, **extra_fields
+    ):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
@@ -25,7 +44,9 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
-        return self.create_user(email, password, **extra_fields)
+        return self.create_user(
+            email, password, first_name, last_name, username, **extra_fields
+        )
 
 
 class User(AbstractUser):
