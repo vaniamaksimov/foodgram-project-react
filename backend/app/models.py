@@ -54,7 +54,9 @@ class Tag(models.Model):
 
     def __str__(self):
         return textwrap.shorten(
-            self.name, settings.LENGTH_OF_STRING, settings.END_OF_STRING
+            text=self.name,
+            width=settings.LENGTH_OF_STRING,
+            initial_indent=settings.END_OF_STRING,
         )
 
 
@@ -81,7 +83,9 @@ class Ingridient(models.Model):
 
     def __str__(self):
         return textwrap.shorten(
-            self.name, settings.LENGTH_OF_STRING, settings.END_OF_STRING
+            text=self.name,
+            width=settings.LENGTH_OF_STRING,
+            placeholder=settings.END_OF_STRING,
         )
 
 
@@ -151,13 +155,19 @@ class Recipe(models.Model):
 
     def __str__(self):
         return textwrap.shorten(
-            self.name, settings.LENGTH_OF_STRING, settings.END_OF_STRING
+            text=self.name,
+            width=settings.LENGTH_OF_STRING,
+            placeholder=settings.END_OF_STRING,
         )
 
 
 class RecipeTag(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.PROTECT)
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, blank=False, null=False
+    )
+    tag = models.ForeignKey(
+        Tag, on_delete=models.PROTECT, blank=False, null=False
+    )
 
 
 class RecipeIngridient(models.Model):
@@ -214,4 +224,4 @@ class FavoriteRecipe(models.Model):
         ]
 
     def __str__(self):
-        return f"Избранный рецепт {self.recipe} пользователя {self.name}"
+        return f"Избранный рецепт {self.recipe} пользователя {self.user}"

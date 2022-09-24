@@ -1,4 +1,5 @@
 import pytest
+
 from users.models import User
 
 
@@ -108,8 +109,3 @@ class TestUser:
         finally:
             count_before_create = User.objects.count()
             assert count_after_create == count_before_create
-
-    @pytest.mark.django_db
-    def test_aasd(self, create_user):
-        create_user()
-        assert User.objects.count() == 1, "Не сработало"

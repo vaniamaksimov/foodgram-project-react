@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "rest_framework",
+    'django_filters',
     "api.apps.ApiConfig",
     "app.apps.AppConfig",
     "users.apps.UsersConfig",
@@ -106,3 +108,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 6,
+}
