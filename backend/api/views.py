@@ -1,10 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
+from django.conf import settings
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth import get_user_model
 
-from .mixins import ListRetriveViewSet
+from .mixins import ListRetriveViewSet, CreateDestroyListViewSet
 from .serializers import IngridientSerializer, TagSerializer
 from app.models import Ingridient, Tag
+from users.models import Subscription
 
 
 class TagViewSet(ListRetriveViewSet):
