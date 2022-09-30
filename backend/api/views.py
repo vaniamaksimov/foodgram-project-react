@@ -5,8 +5,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
 
 from .mixins import ListRetriveViewSet, CreateDestroyListViewSet
-from .serializers import IngridientSerializer, TagSerializer
-from app.models import Ingridient, Tag
+from .serializers import IngridientSerializer, TagSerializer, RecipeSerializer
+from app.models import Ingridient, Tag, Recipe
 from users.models import Subscription
 
 
@@ -23,3 +23,14 @@ class IngridientViewSet(ListRetriveViewSet):
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('name',)
     search_fields = ('name',)
+
+
+class RecipeViewSet(ModelViewSet):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user)
