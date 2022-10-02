@@ -173,7 +173,7 @@ class RecipeTag(models.Model):
 class RecipeIngridient(models.Model):
     ingridient = models.ForeignKey(Ingridient, on_delete=models.PROTECT)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
         blank=False,
         null=False,
@@ -195,7 +195,7 @@ class RecipeIngridient(models.Model):
     def __str__(self):
         return (
             f"В рецепте {self.ingridient} используется "
-            f"ингридиент {self.ingridient} в количестве {self.quantity}"
+            f"ингридиент {self.ingridient} в количестве {self.amount}"
         )
 
 

@@ -12,5 +12,7 @@ class ListRetriveViewSet(GenericViewSet, RetrieveModelMixin, ListModelMixin):
     pass
 
 
-class CreateDestroyListViewSet(GenericViewSet, CreateModelMixin, DestroyModelMixin, ListModelMixin):
+class CreateDestroyListViewSet(
+    GenericViewSet, CreateModelMixin, DestroyModelMixin, ListModelMixin
+):
     pass

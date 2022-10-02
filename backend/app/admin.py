@@ -45,8 +45,8 @@ class recipemodelsAdmin(admin.ModelAdmin):
 
 
 class favoriterecipemodelsAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
-    list_filter = ('user', 'recipe')
+    list_display = ("user", "recipe")
+    list_filter = ("user", "recipe")
 
 
 admin.site.register(Tag, tagmodelsAdmin)
