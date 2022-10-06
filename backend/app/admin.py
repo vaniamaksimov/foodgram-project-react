@@ -1,15 +1,7 @@
 from django.contrib import admin
-from .models import (
-    Tag,
-    Ingridient,
-    Recipe,
-    RecipeTag,
-    RecipeIngridient,
-    FavoriteRecipe,
-)
 
-
-# На странице рецепта вывести общее число добавлений этого рецепта в избранное.
+from .models import (FavoriteRecipe, Ingridient, Recipe, RecipeIngridient,
+                     RecipeTag, Tag)
 
 
 class RecipeTagInLine(admin.TabularInline):

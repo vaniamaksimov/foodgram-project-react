@@ -18,7 +18,9 @@ known_local_folder = [
     'recipes',
     'users',
     'cart',
-    'app'
+    'app',
+    'core',
+    'tests'
     ]
 
 [tool.flake8]
