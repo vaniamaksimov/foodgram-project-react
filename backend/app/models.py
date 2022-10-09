@@ -171,15 +171,15 @@ class RecipeTag(models.Model):
 
 
 class RecipeIngridient(models.Model):
-    ingridient = models.ForeignKey(Ingridient, on_delete=models.PROTECT)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    ingridient = models.ForeignKey(Ingridient, on_delete=models.PROTECT, blank=False, null=False)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, blank=False, null=False)
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
         blank=False,
         null=False,
         validators=[
             MinValueValidator(
-                limit_value=0, message="Количество не может быть меньше 0"
+                limit_value=0.1, message="Количество не может быть меньше 0"
             )
         ],
     )

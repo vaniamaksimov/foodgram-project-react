@@ -144,7 +144,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     ingridients = RecipeIngridientCreateSerializer(
-        source="recipeingridient_set", many=True
+        source="recipeingridient_set", many=True, required=True, allow_null=False
     )
     tags = serializers.SlugRelatedField(slug_field='id', queryset=Tag.objects.all(), many=True)
     image = Base64ImageField(allow_null=False)
@@ -173,21 +173,34 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        instance.ingredients.clear()
-        instance.tags.clear()
+        instance.recipetag_set.all().delete()
+        instance.recipeingridient_set.all().delete()
         instance.image = validated_data.get('image', instance.image)
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
         instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
         if 'tags' in validated_data:
             tags_data = validated_data.pop('tags')
-            tags_list = []
             for tag in tags_data:
                 current_tag = Tag.objects.get(id=tag.id)
-                tags_list.append(current_tag)
-            instance.tags.set(tags_list)
-        ...
+                RecipeTag.objects.create(recipe=instance, tag=current_tag)
+        if 'recipeingridient_set' in validated_data:
+            ingridients_data = validated_data.pop('recipeingridient_set')
+            for ingridient in ingridients_data:
+                current_ingridient = Ingridient.objects.get(id=ingridient['ingridient'].id)
+                RecipeIngridient.objects.create(recipe=instance, ingridient=current_ingridient, amount=ingridient['amount'])
+        instance.save()
+        return instance
 
+    def validate_ingridients(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError('Укажите ингридиенты')
+        return value
+
+    def validate_tags(self, value):
+        if len(value) == 0:
+            raise serializers.ValidationError('Укажите теги')
+        return value
 
 class UserRecipeSerializer(serializers.ModelSerializer):
     class Meta:
