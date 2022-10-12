@@ -1,27 +1,26 @@
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.pagination import LimitOffsetPagination
 
 from .mixins import ListRetriveViewSet
-from .serializers import (FavoriteRecipeSerializer, IngridientSerializer,
+from .serializers import (FavoriteRecipeSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeSerializer,
                           TagSerializer, UserRecipeSerializer,
                           UserSubscriptionSerializer)
-from app.models import FavoriteRecipe, Ingridient, Recipe, Tag
+from app.models import FavoriteRecipe, Ingredient, Recipe, Tag
 from cart.models import Cart, Cart_item
-from core.generics import get_object_or_400
+from core.filters import IngredientFilter, RecipeFilter
+from core.generics import get_object_or_400, get_pdf
+from core.pagination import RecipePagination
 from core.permissions import IsAuthorIsAuthenticatedOrReadOnly
 from users.models import Subscription
-from core.filters import IngridientFilter, RecipeFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from core.generics import get_pdf
-from core.pagination import RecipePagination
 
 User = get_user_model()
 
@@ -32,11 +31,11 @@ class TagViewSet(ListRetriveViewSet):
     pagination_class = None
 
 
-class IngridientViewSet(ListRetriveViewSet):
-    queryset = Ingridient.objects.all()
-    serializer_class = IngridientSerializer
+class IngredientViewSet(ListRetriveViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
     pagination_class = None
-    filterset_class = IngridientFilter
+    filterset_class = IngredientFilter
 
 
 class RecipeViewSet(ModelViewSet):
@@ -63,20 +62,27 @@ class RecipeViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        _serializer = RecipeSerializer(instance=serializer.instance, context={'request': request})
-        return Response(_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
+        _serializer = RecipeSerializer(
+            instance=serializer.instance, context={"request": request}
+        )
+        return Response(
+            _serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=partial
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        if getattr(instance, '_prefetched_objects_cache', None):
+        if getattr(instance, "_prefetched_objects_cache", None):
             instance._prefetched_objects_cache = {}
-        _serializer = RecipeSerializer(instance=serializer.instance, context={'request': request})
+        _serializer = RecipeSerializer(
+            instance=serializer.instance, context={"request": request}
+        )
         return Response(_serializer.data, status=status.HTTP_200_OK)
-
 
     @action(
         methods=["post", "delete"],
@@ -130,11 +136,8 @@ class RecipeViewSet(ModelViewSet):
             cart_item.delete()
             return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-
     @action(
-        methods=['get'],
-        detail=False,
-        permission_classes=[IsAuthenticated]
+        methods=["get"], detail=False, permission_classes=[IsAuthenticated]
     )
     def download_shopping_cart(self, request, *args, **kwargs):
         user = self.request.user

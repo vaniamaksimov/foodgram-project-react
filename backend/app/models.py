@@ -60,7 +60,7 @@ class Tag(models.Model):
         )
 
 
-class Ingridient(models.Model):
+class Ingredient(models.Model):
     name = models.CharField(
         verbose_name="Название ингридиента",
         max_length=200,
@@ -128,12 +128,12 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         blank=False,
     )
-    ingridients = models.ManyToManyField(
-        Ingridient,
+    ingredients = models.ManyToManyField(
+        Ingredient,
         related_name="recipes",
         verbose_name="Ингридиенты рецепта",
         blank=False,
-        through="RecipeIngridient",
+        through="RecipeIngredient",
     )
     image = models.ImageField(
         verbose_name="Изображение рецепта",
@@ -170,9 +170,13 @@ class RecipeTag(models.Model):
     )
 
 
-class RecipeIngridient(models.Model):
-    ingridient = models.ForeignKey(Ingridient, on_delete=models.PROTECT, blank=False, null=False)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, blank=False, null=False)
+class RecipeIngredient(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient, on_delete=models.PROTECT, blank=False, null=False
+    )
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE, blank=False, null=False
+    )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
         blank=False,
@@ -187,15 +191,15 @@ class RecipeIngridient(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["ingridient", "recipe"],
-                name="unique_ingridient_for_recipe",
+                fields=["ingredient", "recipe"],
+                name="unique_ingredient_for_recipe",
             )
         ]
 
     def __str__(self):
         return (
-            f"В рецепте {self.ingridient} используется "
-            f"ингридиент {self.ingridient} в количестве {self.amount}"
+            f"В рецепте {self.ingredient} используется "
+            f"ингридиент {self.ingredient} в количестве {self.amount}"
         )
 
 

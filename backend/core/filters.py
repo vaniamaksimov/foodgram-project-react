@@ -1,24 +1,22 @@
-from django_filters import rest_framework as filters
 from django.contrib.auth import get_user_model
-from app.models import Ingridient, Recipe
+from django_filters import rest_framework as filters
 
+from app.models import Ingredient, Recipe
 
 User = get_user_model()
 
 
-class IngridientFilter(filters.FilterSet):
+class IngredientFilter(filters.FilterSet):
     name = filters.CharFilter(method="name_search")
 
     class Meta:
-        model = Ingridient
-        fields = ['name']
-    
+        model = Ingredient
+        fields = ["name"]
+
     def name_search(self, queryset, name, value):
         if not value:
             return queryset
-        contain_queryset = (
-            queryset.filter(name__iregex=value)
-        )
+        contain_queryset = queryset.filter(name__iregex=value)
         return contain_queryset
 
 
