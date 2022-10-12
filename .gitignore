@@ -132,6 +132,6 @@ dmypy.json
 .idea
 
 # folders
-migrations/
+*migrations/
 images/
 .vscode/
