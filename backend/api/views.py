@@ -1,21 +1,27 @@
 from django.contrib.auth import get_user_model
-from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import filters, status
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.pagination import LimitOffsetPagination
 
 from .mixins import ListRetriveViewSet
 from .serializers import (FavoriteRecipeSerializer, IngridientSerializer,
-                          RecipeSerializer, TagSerializer,
-                          UserRecipeSerializer, UserSubscriptionSerializer, RecipeCreateSerializer)
+                          RecipeCreateSerializer, RecipeSerializer,
+                          TagSerializer, UserRecipeSerializer,
+                          UserSubscriptionSerializer)
 from app.models import FavoriteRecipe, Ingridient, Recipe, Tag
 from cart.models import Cart, Cart_item
 from core.generics import get_object_or_400
+from core.permissions import IsAuthorIsAuthenticatedOrReadOnly
 from users.models import Subscription
+from core.filters import IngridientFilter, RecipeFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from core.generics import get_pdf
+from core.pagination import RecipePagination
 
 User = get_user_model()
 
@@ -30,14 +36,16 @@ class IngridientViewSet(ListRetriveViewSet):
     queryset = Ingridient.objects.all()
     serializer_class = IngridientSerializer
     pagination_class = None
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ("name",)
-    search_fields = ("name",)
+    filterset_class = IngridientFilter
 
 
 class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     lookup_field = "id"
+    pagination_class = RecipePagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
+    permission_classes = [IsAuthorIsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
@@ -64,11 +72,11 @@ class RecipeViewSet(ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
         _serializer = RecipeSerializer(instance=serializer.instance, context={'request': request})
         return Response(_serializer.data, status=status.HTTP_200_OK)
+
 
     @action(
         methods=["post", "delete"],
@@ -123,7 +131,20 @@ class RecipeViewSet(ModelViewSet):
             return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
 
+    @action(
+        methods=['get'],
+        detail=False,
+        permission_classes=[IsAuthenticated]
+    )
+    def download_shopping_cart(self, request, *args, **kwargs):
+        user = self.request.user
+        cart = user.cart
+        return get_pdf(user=user, cart=cart)
+
+
 class CustomUserViewSet(UserViewSet):
+    pagination_class = LimitOffsetPagination
+
     @action(
         methods=["get"], detail=False, permission_classes=[IsAuthenticated]
     )

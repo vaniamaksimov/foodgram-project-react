@@ -19,7 +19,7 @@ class Cart(models.Model):
         verbose_name_plural = "Корзины"
 
     def __str__(self):
-        return f"Корзина пользователя {self.user}"
+        return f"Корзина пользователя {self.user.username}"
 
 
 class Cart_item(models.Model):
@@ -49,4 +49,4 @@ class Cart_item(models.Model):
         ]
 
     def __str__(self):
-        return f"Рецепт {self.recipe} в корзине {self.cart}"
+        return f"Рецепт {self.recipe} в корзине пользователя {self.cart.user.username}"
