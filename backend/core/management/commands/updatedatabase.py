@@ -93,7 +93,7 @@ def tag_processing():
         settings.CSV_ROOT + 'tag.csv',
         newline='',
     ) as csvfile:
-        tag_data = csv.reader(csvfile, delimiter=';')
+        tag_data = csv.reader(csvfile, delimiter=';',)
         for row in tag_data:
             if row[0].lower() != 'id':
                 tag = {

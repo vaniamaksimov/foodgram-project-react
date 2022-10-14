@@ -11,7 +11,9 @@ User = get_user_model()
 
 
 class UserMeSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed'
+    )
 
     class Meta:
         model = User
@@ -23,6 +25,32 @@ class UserMeSerializer(UserSerializer):
             "last_name",
             "is_subscribed",
         )
+
+    def get_is_subscribed(self, obj):
+        user = self.context["request"].user
+        return (
+            False
+            if user.is_anonymous
+            else Subscription.objects.filter(user=user, author=obj).exists()
+        )
+
+
+class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='is_subscribed',
+        read_only=True,
+    )
+
+    class Meta:
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+        )
+        model = User
 
     def get_is_subscribed(self, obj):
         user = self.context["request"].user
@@ -63,24 +91,6 @@ class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
         model = RecipeIngredient
 
 
-class UserSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "is_subscribed",
-        )
-        model = User
-
-    def get_is_subscribed(self, obj):
-        return False
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ("id", "name", "color", "slug")
@@ -96,13 +106,22 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(
-        read_only=True, default=serializers.CurrentUserDefault()
+        read_only=True,
+        default=serializers.CurrentUserDefault(),
     )
     ingredients = RecipeIngredientSerializer(
-        source="recipeingredient_set", many=True, read_only=True
+        source="recipeingredient_set",
+        many=True,
+        read_only=True,
     )
-    is_favorited = serializers.SerializerMethodField(read_only=True)
-    is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
+    is_favorited = serializers.SerializerMethodField(
+        method_name='get_is_favorited',
+        read_only=True,
+    )
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        method_name='get_is_in_shopping_cart',
+        read_only=True,
+    )
     image = Base64ImageField(allow_null=False, read_only=True)
 
     class Meta:
@@ -229,9 +248,15 @@ class UserRecipeSerializer(serializers.ModelSerializer):
 
 
 class UserSubscriptionSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField(
+        method_name='get_is_subscribed',
+        read_only=True,
+    )
     recipes = UserRecipeSerializer(many=True)
-    recipes_count = serializers.SerializerMethodField(read_only=True)
+    recipes_count = serializers.SerializerMethodField(
+        method_name='get_recipes_count',
+        read_only=True,
+    )
 
     class Meta:
         fields = (
