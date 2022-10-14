@@ -1,4 +1,3 @@
-sep=;
 id;password;last_login;is_superuser;is_staff;is_active;date_joined;username;first_name;last_name;email
 1;admin;;1;1;1;;admin;admin;admin;admin@email.com
 2;testpassword;;0;0;0;;testuser1;testuser1;testuser1;testuser1@email.com

@@ -66,7 +66,7 @@ class Ingredient(models.Model):
         max_length=200,
         blank=False,
         null=False,
-        unique=True,
+        unique=False,
         db_index=True,
     )
     measurement_unit = models.CharField(
@@ -80,6 +80,11 @@ class Ingredient(models.Model):
         verbose_name = "Ингридиент"
         verbose_name_plural = "Ингридиенты"
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "measurement_unit"], name="unique_ingredient_unit"
+            ),
+        ]
 
     def __str__(self):
         return textwrap.shorten(

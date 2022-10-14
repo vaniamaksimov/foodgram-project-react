@@ -133,5 +133,4 @@ dmypy.json
 
 # folders
 *migrations/
-images/
 .vscode/
