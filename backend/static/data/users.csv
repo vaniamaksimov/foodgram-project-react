@@ -1,0 +1,13 @@
+sep=;
+id;password;last_login;is_superuser;is_staff;is_active;date_joined;username;first_name;last_name;email
+1;admin;;1;1;1;;admin;admin;admin;admin@email.com
+2;testpassword;;0;0;0;;testuser1;testuser1;testuser1;testuser1@email.com
+3;testpassword;;0;0;0;;testuser2;testuser2;testuser2;testuser2@email.com
+4;testpassword;;0;0;0;;testuser3;testuser3;testuser3;testuser3@email.com
+5;testpassword;;0;0;0;;testuser4;testuser4;testuser4;testuser4@email.com
+6;testpassword;;0;0;0;;testuser5;testuser5;testuser5;testuser5@email.com
+7;testpassword;;0;0;0;;testuser6;testuser6;testuser6;testuser6@email.com
+8;testpassword;;0;0;0;;testuser7;testuser7;testuser7;testuser7@email.com
+9;testpassword;;0;0;0;;testuser8;testuser8;testuser8;testuser8@email.com
+10;testpassword;;0;0;0;;testuser9;testuser9;testuser9;testuser9@email.com
+11;testpassword;;0;0;0;;testuser10;testuser10;testuser10;testuser10@email.com
