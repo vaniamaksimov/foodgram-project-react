@@ -44,7 +44,7 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = RecipePagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    permission_classes = [IsAuthorIsAuthenticatedOrReadOnly]
+    permission_classes = (IsAuthorIsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
         if self.request.method in SAFE_METHODS:
@@ -77,17 +77,15 @@ class RecipeViewSet(ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        if getattr(instance, "_prefetched_objects_cache", None):
-            instance._prefetched_objects_cache = {}
         _serializer = RecipeSerializer(
             instance=serializer.instance, context={"request": request}
         )
         return Response(_serializer.data, status=status.HTTP_200_OK)
 
     @action(
-        methods=["post", "delete"],
+        methods=("post", "delete",),
         detail=True,
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, id=None):
         user = self.request.user
@@ -110,9 +108,9 @@ class RecipeViewSet(ModelViewSet):
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=["post", "delete"],
+        methods=("post", "delete",),
         detail=True,
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated,),
     )
     def shopping_cart(self, request, id=None):
         user = self.request.user
@@ -137,7 +135,7 @@ class RecipeViewSet(ModelViewSet):
             return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=["get"], detail=False, permission_classes=[IsAuthenticated]
+        methods=("get",), detail=False, permission_classes=(IsAuthenticated,)
     )
     def download_shopping_cart(self, request, *args, **kwargs):
         user = self.request.user
@@ -149,7 +147,9 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = LimitOffsetPagination
 
     @action(
-        methods=["get"], detail=False, permission_classes=[IsAuthenticated]
+        methods=("get",),
+        detail=False,
+        permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request, *args, **kwargs):
         user = self.request.user
@@ -161,9 +161,9 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=["post", "delete"],
+        methods=("post", "delete",),
         detail=True,
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated,),
         name="subscribe",
     )
     def subscribe(self, request, id=None):

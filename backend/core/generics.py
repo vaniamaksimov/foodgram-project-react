@@ -1,7 +1,6 @@
-import csv
 import io
-from typing import Tuple
 
+from django.contrib.auth import get_user_model
 from django.db.models import F, Sum
 from django.http import FileResponse
 from reportlab.lib.pagesizes import letter
@@ -10,15 +9,9 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from rest_framework.validators import ValidationError
-from django.contrib.auth import get_user_model
-from django.db import transaction
-from django.conf import settings
-
 
 from app.models import RecipeIngredient
-
 from core.exceptions import Http400
-
 
 User = get_user_model()
 
@@ -48,7 +41,9 @@ def get_object_or_400(klass, *args, **kwargs):
         ValueError,
         ValidationError,
     ):
-        raise Http400
+        raise Http400(
+            f'Не найден объект {queryset.model._meta.object_name}'
+        )
 
 
 def get_pdf(user, cart):

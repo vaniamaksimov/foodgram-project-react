@@ -1,5 +1,10 @@
+from email.policy import default
+from pprint import pprint
+from attr import attr
 from django.contrib.auth import get_user_model
+from django.forms import ValidationError
 from djoser.serializers import UserSerializer
+from django.db import transaction
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
@@ -37,7 +42,7 @@ class UserMeSerializer(UserSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(
-        method_name='is_subscribed',
+        method_name='get_is_subscribed',
         read_only=True,
     )
 
@@ -184,10 +189,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         )
         model = Recipe
 
-    def create(self, validated_data):
-        tags = validated_data.pop("tags")
-        ingredients = validated_data.pop("recipeingredient_set")
-        recipe = Recipe.objects.create(**validated_data)
+    @staticmethod
+    def _create_links(recipe, tags, ingredients):
         for tag in tags:
             current_tag = Tag.objects.get(id=tag.id)
             RecipeTag.objects.create(recipe=recipe, tag=current_tag)
@@ -202,43 +205,41 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         return recipe
 
+    @staticmethod
+    def _get_tags_and_recipeingridients(validated_data):
+        tags = validated_data.pop('tags')
+        recipeingredients = validated_data.pop('recipeingredient_set')
+        return tags, recipeingredients, validated_data
+
+    @transaction.atomic
+    def create(self, validated_data):
+        tags, recipeingredients, _validated_data = self._get_tags_and_recipeingridients(validated_data=validated_data)
+        recipe = Recipe.objects.create(**_validated_data)
+        return self._create_links(recipe=recipe, tags=tags, ingredients=recipeingredients)
+
+    @transaction.atomic
     def update(self, instance, validated_data):
         instance.recipetag_set.all().delete()
         instance.recipeingredient_set.all().delete()
-        instance.image = validated_data.get("image", instance.image)
-        instance.name = validated_data.get("name", instance.name)
-        instance.text = validated_data.get("text", instance.text)
-        instance.cooking_time = validated_data.get(
-            "cooking_time", instance.cooking_time
-        )
-        if "tags" in validated_data:
-            tags_data = validated_data.pop("tags")
-            for tag in tags_data:
-                current_tag = Tag.objects.get(id=tag.id)
-                RecipeTag.objects.create(recipe=instance, tag=current_tag)
-        if "recipeingredient_set" in validated_data:
-            ingredients_data = validated_data.pop("recipeingredient_set")
-            for ingredient in ingredients_data:
-                current_ingredient = Ingredient.objects.get(
-                    id=ingredient["ingredient"].id
-                )
-                RecipeIngredient.objects.create(
-                    recipe=instance,
-                    ingredient=current_ingredient,
-                    amount=ingredient["amount"],
-                )
-        instance.save()
-        return instance
+        tags, recipeingredients, _validated_data = self._get_tags_and_recipeingridients(validated_data=validated_data)
+        super().update(instance=instance, validated_data=_validated_data)
+        return self._create_links(recipe=instance, tags=tags, ingredients=recipeingredients)
 
-    def validate_ingredients(self, value):
-        if len(value) == 0:
-            raise serializers.ValidationError("Укажите ингридиенты")
-        return value
-
-    def validate_tags(self, value):
-        if len(value) == 0:
-            raise serializers.ValidationError("Укажите теги")
-        return value
+    def validate(self, attrs):
+        recipeingredients = attrs.get('recipeingredient_set')
+        recipetags = attrs.get('tags')
+        if len(recipetags) == 0:
+            raise serializers.ValidationError('Укажите теги')
+        if len(recipeingredients) == 0:
+            raise serializers.ValidationError('Укажите ингридиенты')
+        ingredient_list = [ingredient.get('ingredient') for ingredient in recipeingredients]
+        for tag in recipetags:
+            if recipetags.count(tag) > 1:
+                raise serializers.ValidationError('Нельзя добавлять одинаковые теги')
+        for _ingredient in ingredient_list:
+            if ingredient_list.count(_ingredient) > 1:
+                raise serializers.ValidationError('Нельзя добавлять одинаковые игридиенты')     
+        return super().validate(attrs)
 
 
 class UserRecipeSerializer(serializers.ModelSerializer):
