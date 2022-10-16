@@ -202,7 +202,8 @@ class RecipeIngredient(models.Model):
     def __str__(self):
         return (
             f"В рецепте {self.ingredient.name} используется "
-            f"ингридиент {self.ingredient.name} в количестве {self.amount} {self.ingredient.measurement_unit}."
+            f"ингридиент {self.ingredient.name} в количестве "
+            f"{self.amount} {self.ingredient.measurement_unit}."
         )
 
 
@@ -235,4 +236,7 @@ class FavoriteRecipe(models.Model):
         ]
 
     def __str__(self):
-        return f"Избранный рецепт {self.recipe.name} пользователя {self.user.get_full_name()}"
+        return (
+            f"Избранный рецепт {self.recipe.name} "
+            f"пользователя {self.user.get_full_name()}"
+        )

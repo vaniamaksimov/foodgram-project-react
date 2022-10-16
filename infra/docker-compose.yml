@@ -1,6 +1,27 @@
-version: '3.3'
+version: '3.8'
 
 services:
+
+  db:
+    image: postgres:13.0-alpine
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.env
+
+  backend:
+    image: vaniamaksimov/foodgramprojectreact:latest
+    restart: always
+    volumes:
+      - static_value:/app_backend/static/
+      - media_value:/app_backend/media/
+    depends_on:
+      - db
+    env_file:
+      - ./.env
+
   frontend:
     build:
       context: ../frontend
@@ -9,6 +30,7 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - backend
+
   nginx:
     image: nginx:1.19.3
     ports:
@@ -22,15 +44,8 @@ services:
     restart: always
     depends_on:
       - frontend
-  backend:
-    build: ../backend
-    restart: always
-    volumes:
-      - static_value:/app_backend/static/
-      - media_value:/app_backend/media/
-    # env_file:
-     # - ./.env
 
 volumes:
   static_value:
   media_value:
+  postgres_data:

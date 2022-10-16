@@ -49,4 +49,7 @@ class Cart_item(models.Model):
         ]
 
     def __str__(self):
-        return f"Рецепт {self.recipe} в корзине пользователя {self.cart.user.username}"
+        return (
+            f"Рецепт {self.recipe} в корзине "
+            f"пользователя {self.cart.user.username}"
+        )

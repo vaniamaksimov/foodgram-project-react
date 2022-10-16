@@ -23,22 +23,6 @@ known_local_folder = [
     'tests'
     ]
 
-[tool.flake8]
-ignore = [
-    'W503',
-    'E501',
-    ]
-exclude = [
-    'tests/',
-    '*/migrations/',
-    'venv/',
-    'env/',
-    ]
-per-file-ignores = [
-    '*/settings.py:E501',
-    ]
-max-complexity = 10
-
 [tool.pytest.ini_options]
 django_find_project = 'true'
 pythonpath = '. backend'

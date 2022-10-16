@@ -11,9 +11,7 @@ class TestTag:
         test_slug,
     ):
         count_before_create = Tag.objects.count()
-        tag = Tag.objects.create(
-            name=test_name, color=test_color, slug=test_slug
-        )
+        Tag.objects.create(name=test_name, color=test_color, slug=test_slug)
         count_after_create = Tag.objects.count()
         assert count_before_create != count_after_create
 

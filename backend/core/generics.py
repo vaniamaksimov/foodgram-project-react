@@ -68,7 +68,9 @@ def get_pdf(user, cart):
     lines.append("Cписок покупок:")
     for ingredient in ingredients:
         lines.append(
-            f'{ingredient["ingredient_in"]}: {ingredient["amount"]} {ingredient["measure"]}'
+            f"{ingredient['ingredient_in']}: "
+            f"{ingredient['amount']} "
+            f"{ingredient['measure']}"
         )
     for line in lines:
         textobject.textLine(line)
