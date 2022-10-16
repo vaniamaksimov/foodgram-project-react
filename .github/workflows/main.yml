@@ -51,6 +51,12 @@ jobs:
           context: ./backend
           push: true
           tags: vaniamaksimov/foodgramprojectreact:latest
+      - name: Push frontend to Docker Hub
+        uses: docker/build-push-action@v2 
+        with:
+          context: ./frontend
+          push: true
+          tags: vaniamaksimov/frontendfoodgramprojectreact:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -65,7 +71,7 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           sudo docker-compose stop
-          sudo docker-compose rm web
+          sudo docker-compose rm backend
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
           echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
