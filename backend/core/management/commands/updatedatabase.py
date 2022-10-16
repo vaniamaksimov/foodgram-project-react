@@ -1,23 +1,27 @@
 import csv
-from tkinter import E
-
-from django.db import transaction
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
+from django.db import transaction
 from django.forms import ValidationError
 
-from app.models import Ingredient, Tag, Recipe, RecipeTag, RecipeIngredient, FavoriteRecipe
-from cart.models import Cart_item
-from cart.models import Cart
+from app.models import (
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    RecipeTag,
+    Tag,
+)
+from cart.models import Cart, Cart_item
 from users.models import Subscription
 
 User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Заполнение базы данных из CSV файла'
+    help = "Заполнение базы данных из CSV файла"
 
     def handle(self, *args, **options):
         try:
@@ -32,26 +36,26 @@ class Command(BaseCommand):
         except ValidationError as e:
             print(e)
         finally:
-            print('database updated')
+            print("database updated")
 
 
 def user_processing():
     with open(
-        settings.CSV_ROOT + 'users.csv',
-        newline='',
+        settings.CSV_ROOT + "users.csv",
+        newline="",
     ) as csvfile:
-        users_data = csv.reader(csvfile, delimiter=';')
+        users_data = csv.reader(csvfile, delimiter=";")
         for row in users_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 user = {
-                    'password': row[1],
-                    'is_superuser': row[3],
-                    'is_staff': row[4],
-                    'is_active': row[5],
-                    'username': row[7],
-                    'first_name': row[8],
-                    'last_name': row[9],
-                    'email': row[10],
+                    "password": row[1],
+                    "is_superuser": row[3],
+                    "is_staff": row[4],
+                    "is_active": row[5],
+                    "username": row[7],
+                    "first_name": row[8],
+                    "last_name": row[9],
+                    "email": row[10],
                 }
                 add_to_database(object_data=user, model=User)
     pass
@@ -59,15 +63,15 @@ def user_processing():
 
 def subscription_processing():
     with open(
-        settings.CSV_ROOT + 'subscription.csv',
-        newline='',
+        settings.CSV_ROOT + "subscription.csv",
+        newline="",
     ) as csvfile:
-        subscription_data = csv.reader(csvfile, delimiter=';')
+        subscription_data = csv.reader(csvfile, delimiter=";")
         for row in subscription_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 subscripion = {
-                    'user_id': row[1],
-                    'author_id': row[2],
+                    "user_id": row[1],
+                    "author_id": row[2],
                 }
                 add_to_database(object_data=subscripion, model=Subscription)
     pass
@@ -75,14 +79,14 @@ def subscription_processing():
 
 def cart_processing():
     with open(
-        settings.CSV_ROOT + 'cart.csv',
-        newline='',
+        settings.CSV_ROOT + "cart.csv",
+        newline="",
     ) as csvfile:
-        cart_data = csv.reader(csvfile, delimiter=';')
+        cart_data = csv.reader(csvfile, delimiter=";")
         for row in cart_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 cart = {
-                    'user_id': row[1],
+                    "user_id": row[1],
                 }
                 add_to_database(object_data=cart, model=Cart)
     pass
@@ -90,15 +94,18 @@ def cart_processing():
 
 def tag_processing():
     with open(
-        settings.CSV_ROOT + 'tag.csv',
-        newline='',
+        settings.CSV_ROOT + "tag.csv",
+        newline="",
     ) as csvfile:
-        tag_data = csv.reader(csvfile, delimiter=';',)
+        tag_data = csv.reader(
+            csvfile,
+            delimiter=";",
+        )
         for row in tag_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 tag = {
-                    'name': row[1],
-                    'color': row[2],
+                    "name": row[1],
+                    "color": row[2],
                 }
                 add_to_database(object_data=tag, model=Tag)
     pass
@@ -106,15 +113,15 @@ def tag_processing():
 
 def ingredient_processing():
     with open(
-        settings.CSV_ROOT + 'ingredients.csv',
-        newline='',
+        settings.CSV_ROOT + "ingredients.csv",
+        newline="",
     ) as csvfile:
-        ingredient_data = csv.reader(csvfile, delimiter=';')
+        ingredient_data = csv.reader(csvfile, delimiter=";")
         for row in ingredient_data:
-            if row[0] != 'name':
+            if row[0] != "name":
                 ingredient = {
-                    'name': row[0],
-                    'measurement_unit': row[1],
+                    "name": row[0],
+                    "measurement_unit": row[1],
                 }
                 add_to_database(object_data=ingredient, model=Ingredient)
     pass
@@ -122,18 +129,18 @@ def ingredient_processing():
 
 def recipe_processing():
     with open(
-        settings.CSV_ROOT + 'recipe.csv',
-        newline='',
+        settings.CSV_ROOT + "recipe.csv",
+        newline="",
     ) as csvfile:
-        recipe_data = csv.reader(csvfile, delimiter=';')
+        recipe_data = csv.reader(csvfile, delimiter=";")
         for row in recipe_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 recipe = {
-                    'name': row[1],
-                    'text': row[2],
-                    'cooking_time': row[3],
-                    'image': row[4],
-                    'author_id': row[5],
+                    "name": row[1],
+                    "text": row[2],
+                    "cooking_time": row[3],
+                    "image": row[4],
+                    "author_id": row[5],
                 }
                 add_to_database(object_data=recipe, model=Recipe)
     pass
@@ -141,15 +148,15 @@ def recipe_processing():
 
 def cart_item_processing():
     with open(
-        settings.CSV_ROOT + 'cart_item.csv',
-        newline='',
+        settings.CSV_ROOT + "cart_item.csv",
+        newline="",
     ) as csvfile:
-        cart_item_data = csv.reader(csvfile, delimiter=';')
+        cart_item_data = csv.reader(csvfile, delimiter=";")
         for row in cart_item_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 cart_item = {
-                    'cart_id': row[1],
-                    'recipe_id': row[2],
+                    "cart_id": row[1],
+                    "recipe_id": row[2],
                 }
                 add_to_database(object_data=cart_item, model=Cart_item)
     pass
@@ -157,39 +164,41 @@ def cart_item_processing():
 
 def favoriterecipe_processing():
     with open(
-        settings.CSV_ROOT + 'favorite_recipe.csv',
-        newline='',
+        settings.CSV_ROOT + "favorite_recipe.csv",
+        newline="",
     ) as csvfile:
-        favorite_recipe_data = csv.reader(csvfile, delimiter=';')
+        favorite_recipe_data = csv.reader(csvfile, delimiter=";")
         for row in favorite_recipe_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 favorite_recipe = {
-                    'recipe_id': row[1],
-                    'user_id': row[2],
+                    "recipe_id": row[1],
+                    "user_id": row[2],
                 }
-                add_to_database(object_data=favorite_recipe, model=FavoriteRecipe)
+                add_to_database(
+                    object_data=favorite_recipe, model=FavoriteRecipe
+                )
     pass
 
 
 @transaction.atomic
 def add_to_database(object_data, model):
-    '''Create objects in database'''
+    """Create objects in database"""
     if issubclass(model, User):
-        if int(object_data.get('is_superuser')) == 1:
+        if int(object_data.get("is_superuser")) == 1:
             model.objects.create_superuser(
-                email=object_data.get('email'),
-                password=object_data.get('password'),
-                first_name=object_data.get('first_name'),
-                last_name=object_data.get('last_name'),
-                username=object_data.get('username'),
+                email=object_data.get("email"),
+                password=object_data.get("password"),
+                first_name=object_data.get("first_name"),
+                last_name=object_data.get("last_name"),
+                username=object_data.get("username"),
             )
             return
         model.objects.create_user(
-            email=object_data.get('email'),
-            password=object_data.get('password'),
-            first_name=object_data.get('first_name'),
-            last_name=object_data.get('last_name'),
-            username=object_data.get('username'),
+            email=object_data.get("email"),
+            password=object_data.get("password"),
+            first_name=object_data.get("first_name"),
+            last_name=object_data.get("last_name"),
+            username=object_data.get("username"),
         )
         return
     elif issubclass(model, Recipe):
@@ -201,47 +210,45 @@ def add_to_database(object_data, model):
         return
     elif issubclass(model, Cart_item):
         cart_item = model(
-            cart_id=object_data.get('cart_id'),
-            recipe_id=object_data.get('recipe_id')
+            cart_id=object_data.get("cart_id"),
+            recipe_id=object_data.get("recipe_id"),
         )
         cart_item.full_clean()
         cart_item.save()
         return
     elif issubclass(model, FavoriteRecipe):
         favorite_recipe = model(
-            recipe_id=object_data.get('recipe_id'),
-            user_id=object_data.get('user_id'),
+            recipe_id=object_data.get("recipe_id"),
+            user_id=object_data.get("user_id"),
         )
         favorite_recipe.full_clean()
         favorite_recipe.save()
         return
     elif issubclass(model, Subscription):
         subscription = model(
-            author_id=object_data.get('author_id'),
-            user_id=object_data.get('user_id'),
+            author_id=object_data.get("author_id"),
+            user_id=object_data.get("user_id"),
         )
         subscription.full_clean()
         subscription.save()
         return
     elif issubclass(model, Tag):
         tag = model(
-            name=object_data.get('name'),
-            color=object_data.get('color'),
+            name=object_data.get("name"),
+            color=object_data.get("color"),
         )
         tag.full_clean()
         tag.save()
         return
     elif issubclass(model, Cart):
-        cart = model(
-            user_id=object_data.get('user_id')
-        )
+        cart = model(user_id=object_data.get("user_id"))
         cart.full_clean()
         cart.save()
         return
     elif issubclass(model, Ingredient):
         ingredient = model(
-            name=object_data.get('name'),
-            measurement_unit=object_data.get('measurement_unit'),
+            name=object_data.get("name"),
+            measurement_unit=object_data.get("measurement_unit"),
         )
         ingredient.full_clean()
         ingredient.save()
@@ -250,23 +257,22 @@ def add_to_database(object_data, model):
 
 def create_recipe_ingredients(recipe):
     with open(
-        settings.CSV_ROOT + 'recipeingredients.csv',
-        newline='',
+        settings.CSV_ROOT + "recipeingredients.csv",
+        newline="",
     ) as csvfile:
-        recipe_ingredient_data = csv.reader(csvfile, delimiter=';')
+        recipe_ingredient_data = csv.reader(csvfile, delimiter=";")
         for row in recipe_ingredient_data:
-            # таблица должна иметь вид id ingredient_id recipe_id amount
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 recipe_ingredient = {
-                    'ingredient_id': row[1],
-                    'recipe_id': row[2],
-                    'amount': row[3],
+                    "ingredient_id": row[1],
+                    "recipe_id": row[2],
+                    "amount": row[3],
                 }
-                if int(recipe_ingredient.get('recipe_id')) == recipe.id:
+                if int(recipe_ingredient.get("recipe_id")) == recipe.id:
                     _object = RecipeIngredient(
-                        ingredient_id=recipe_ingredient.get('ingredient_id'),
+                        ingredient_id=recipe_ingredient.get("ingredient_id"),
                         recipe_id=recipe.id,
-                        amount=recipe_ingredient.get('amount'),
+                        amount=recipe_ingredient.get("amount"),
                     )
                     _object.full_clean()
                     _object.save()
@@ -274,20 +280,19 @@ def create_recipe_ingredients(recipe):
 
 def create_recipe_tags(recipe):
     with open(
-        settings.CSV_ROOT + 'recipetags.csv',
-        newline='',
+        settings.CSV_ROOT + "recipetags.csv",
+        newline="",
     ) as csvfile:
-        recipe_tag_data = csv.reader(csvfile, delimiter=';')
+        recipe_tag_data = csv.reader(csvfile, delimiter=";")
         for row in recipe_tag_data:
-            if row[0].lower() != 'id':
+            if row[0].lower() != "id":
                 recipe_tag = {
-                    'recipe_id': row[1],
-                    'tag_id': row[2],
+                    "recipe_id": row[1],
+                    "tag_id": row[2],
                 }
-                if int(recipe_tag.get('recipe_id')) == recipe.id:
+                if int(recipe_tag.get("recipe_id")) == recipe.id:
                     _object = RecipeTag(
-                        recipe_id=recipe.id,
-                        tag_id=recipe_tag.get('tag_id')
+                        recipe_id=recipe.id, tag_id=recipe_tag.get("tag_id")
                     )
                     _object.full_clean()
                     _object.save()

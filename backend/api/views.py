@@ -10,10 +10,15 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .mixins import ListRetriveViewSet
-from .serializers import (FavoriteRecipeSerializer, IngredientSerializer,
-                          RecipeCreateSerializer, RecipeSerializer,
-                          TagSerializer, UserRecipeSerializer,
-                          UserSubscriptionSerializer)
+from .serializers import (
+    FavoriteRecipeSerializer,
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeSerializer,
+    TagSerializer,
+    UserRecipeSerializer,
+    UserSubscriptionSerializer,
+)
 from app.models import FavoriteRecipe, Ingredient, Recipe, Tag
 from cart.models import Cart, Cart_item
 from core.filters import IngredientFilter, RecipeFilter
@@ -83,7 +88,10 @@ class RecipeViewSet(ModelViewSet):
         return Response(_serializer.data, status=status.HTTP_200_OK)
 
     @action(
-        methods=("post", "delete",),
+        methods=(
+            "post",
+            "delete",
+        ),
         detail=True,
         permission_classes=(IsAuthenticated,),
     )
@@ -108,7 +116,10 @@ class RecipeViewSet(ModelViewSet):
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
     @action(
-        methods=("post", "delete",),
+        methods=(
+            "post",
+            "delete",
+        ),
         detail=True,
         permission_classes=(IsAuthenticated,),
     )
@@ -161,7 +172,10 @@ class CustomUserViewSet(UserViewSet):
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=("post", "delete",),
+        methods=(
+            "post",
+            "delete",
+        ),
         detail=True,
         permission_classes=(IsAuthenticated,),
         name="subscribe",

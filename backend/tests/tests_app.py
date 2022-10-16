@@ -21,7 +21,9 @@ class TestTag:
     def test_incorrect_color(self, test_name, test_slug):
         count_before_create = Tag.objects.count()
         try:
-            Tag.objects.create(name=test_name, color="NOCOLOR", slug=test_slug)
+            tag = Tag(name=test_name, color="NOCOLOR", slug=test_slug)
+            tag.full_clean()
+            tag.save()
         except Exception:
             pass
         finally:

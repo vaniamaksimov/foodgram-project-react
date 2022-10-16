@@ -12,7 +12,7 @@ class Tag(models.Model):
         max_length=200,
         unique=True,
         db_index=True,
-        help_text='Название тега',
+        help_text="Название тега",
     )
     color = models.CharField(
         verbose_name="Код цвета",
@@ -75,7 +75,10 @@ class Ingredient(models.Model):
         ordering = ("name",)
         constraints = [
             models.UniqueConstraint(
-                fields=("name", "measurement_unit",),
+                fields=(
+                    "name",
+                    "measurement_unit",
+                ),
                 name="unique_ingredient_unit",
             ),
         ]
@@ -114,8 +117,7 @@ class Recipe(models.Model):
         through="RecipeTag",
     )
     created_at = models.DateTimeField(
-        verbose_name="Дата публикации",
-        auto_now_add=True
+        verbose_name="Дата публикации", auto_now_add=True
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -154,10 +156,12 @@ class Recipe(models.Model):
 
 class RecipeTag(models.Model):
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE,
+        Recipe,
+        on_delete=models.CASCADE,
     )
     tag = models.ForeignKey(
-        Tag, on_delete=models.PROTECT,
+        Tag,
+        on_delete=models.PROTECT,
     )
 
     class Meta:
@@ -171,10 +175,12 @@ class RecipeTag(models.Model):
 
 class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
-        Ingredient, on_delete=models.PROTECT,
+        Ingredient,
+        on_delete=models.PROTECT,
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE,
+        Recipe,
+        on_delete=models.CASCADE,
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name="Количество",
@@ -220,7 +226,10 @@ class FavoriteRecipe(models.Model):
         ordering = ("user",)
         constraints = [
             models.UniqueConstraint(
-                fields=("user", "recipe",),
+                fields=(
+                    "user",
+                    "recipe",
+                ),
                 name="unice_favorite_recipe",
             )
         ]
