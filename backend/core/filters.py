@@ -16,8 +16,7 @@ class IngredientFilter(filters.FilterSet):
     def name_search(self, queryset, name, value):
         if not value:
             return queryset
-        contain_queryset = queryset.filter(name__iregex=value)
-        return contain_queryset
+        return queryset.filter(name__iregex=value)
 
 
 class RecipeFilter(filters.FilterSet):

@@ -140,10 +140,9 @@ class RecipeViewSet(ModelViewSet):
                 instance=cart_item.recipe, context={"request": request}
             )
             return Response(data=serializer.data)
-        if self.request.method == "DELETE":
-            cart_item = get_object_or_400(CartItem, recipe=recipe, cart=cart)
-            cart_item.delete()
-            return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+        cart_item = get_object_or_400(CartItem, recipe=recipe, cart=cart)
+        cart_item.delete()
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
     @action(
         methods=("get",), detail=False, permission_classes=(IsAuthenticated,)
@@ -202,9 +201,8 @@ class CustomUserViewSet(UserViewSet):
                 queryset, context={"request": request}
             )
             return Response(serializer.data)
-        if self.request.method == "DELETE":
-            subscription = get_object_or_400(
-                Subscription, user=user, author=author
-            )
-            subscription.delete()
-            return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+        subscription = get_object_or_400(
+            Subscription, user=user, author=author
+        )
+        subscription.delete()
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
