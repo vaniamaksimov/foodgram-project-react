@@ -72,7 +72,7 @@ jobs:
         script: |
           sudo docker-compose stop
           sudo docker-compose rm backend
-          touch .env
+          sudo touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
           echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
