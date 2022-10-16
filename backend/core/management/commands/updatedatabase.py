@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.forms import ValidationError
 
 from app.models import (
     FavoriteRecipe,
@@ -33,7 +32,7 @@ class Command(BaseCommand):
             recipe_processing()
             cart_item_processing()
             favoriterecipe_processing()
-        except ValidationError as e:
+        except Exception as e:
             print(e)
         finally:
             print("database updated")
