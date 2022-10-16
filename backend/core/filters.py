@@ -6,6 +6,15 @@ from app.models import Ingredient, Recipe
 User = get_user_model()
 
 
+def if_user_is_anonymous(func):
+    def check_user(self, queryset, name, value, *args, **kwargs):
+        if self.request.user.is_anonymous:
+            return queryset.none()
+        return func(self, queryset, name, value, *args, **kwargs)
+
+    return check_user
+
+
 class IngredientFilter(filters.FilterSet):
     name = filters.CharFilter(method="name_search")
 
@@ -33,14 +42,6 @@ class RecipeFilter(filters.FilterSet):
             "tags",
             "author",
         )
-
-    def if_user_is_anonymous(func):
-        def check_user(self, queryset, name, value, *args, **kwargs):
-            if self.request.user.is_anonymous:
-                return queryset.none()
-            return func(self, queryset, name, value, *args, **kwargs)
-
-        return check_user
 
     @if_user_is_anonymous
     def get_is_favorited(self, queryset, name, value):
