@@ -3,13 +3,13 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = (
-    os.getenv('SECRET_KEY',)
+SECRET_KEY = os.getenv(
+    "SECRET_KEY",
 )
 
 DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = [os.getenv("ALLOWED_HOSTS")]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -62,13 +62,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
 DATABASES = {
-    'default': {
-        'ENGINE': os.getenv('DB_ENGINE',),
-        'NAME': os.getenv('DB_NAME',),
-        'USER': os.getenv('POSTGRES_USER',),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD',),
-        'HOST': os.getenv('DB_HOST',),
-        'PORT': os.getenv('DB_PORT',),
+    "default": {
+        "ENGINE": os.getenv(
+            "DB_ENGINE",
+        ),
+        "NAME": os.getenv(
+            "DB_NAME",
+        ),
+        "USER": os.getenv(
+            "POSTGRES_USER",
+        ),
+        "PASSWORD": os.getenv(
+            "POSTGRES_PASSWORD",
+        ),
+        "HOST": os.getenv(
+            "DB_HOST",
+        ),
+        "PORT": os.getenv(
+            "DB_PORT",
+        ),
     }
 }
 
