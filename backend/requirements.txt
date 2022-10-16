@@ -23,6 +23,7 @@ Flake8-pyproject==1.1.0.post0
 gunicorn==20.1.0
 idna==3.4
 iniconfig==1.1.1
+isort==5.10.1
 itypes==1.2.0
 Jinja2==3.1.2
 MarkupSafe==2.1.1

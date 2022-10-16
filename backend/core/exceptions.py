@@ -1,7 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from rest_framework.views import exception_handler
-from rest_framework.views import set_rollback
+from rest_framework.views import exception_handler, set_rollback
 
 
 class Http400(Exception):
