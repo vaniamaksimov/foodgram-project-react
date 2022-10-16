@@ -52,8 +52,10 @@ def user_processing():
                     "last_name": row[9],
                     "email": row[10],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(object_data=user, model=User)
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -69,10 +71,12 @@ def subscription_processing():
                     "user_id": row[1],
                     "author_id": row[2],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(
                         object_data=subscripion, model=Subscription
                     )
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -87,8 +91,10 @@ def cart_processing():
                 cart = {
                     "user_id": row[1],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(object_data=cart, model=Cart)
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -107,8 +113,10 @@ def tag_processing():
                     "name": row[1],
                     "color": row[2],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(object_data=tag, model=Tag)
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -124,8 +132,10 @@ def ingredient_processing():
                     "name": row[0],
                     "measurement_unit": row[1],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(object_data=ingredient, model=Ingredient)
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -144,8 +154,10 @@ def recipe_processing():
                     "image": row[4],
                     "author_id": row[5],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(object_data=recipe, model=Recipe)
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -161,8 +173,10 @@ def cart_item_processing():
                     "cart_id": row[1],
                     "recipe_id": row[2],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(object_data=cart_item, model=CartItem)
+                except Exception as e:
+                    print(e)
     pass
 
 
@@ -178,13 +192,16 @@ def favoriterecipe_processing():
                     "recipe_id": row[1],
                     "user_id": row[2],
                 }
-                with transaction.atomic():
+                try:
                     add_to_database(
                         object_data=favorite_recipe, model=FavoriteRecipe
                     )
+                except Exception as e:
+                    print(e)
     pass
 
 
+@transaction.atomic
 def add_to_database(object_data, model):
     """Create objects in database"""
     if issubclass(model, User):
