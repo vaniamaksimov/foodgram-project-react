@@ -224,11 +224,11 @@ def add_to_database(object_data, model):
         return
     elif issubclass(model, Recipe):
         recipe = model(
-            name=object_data.get('name'),
-            text=object_data.get('text'),
-            cooking_time=object_data.get('cooking_time'),
-            image=object_data.get('image'),
-            author_id=object_data.get('author_id'),
+            name=object_data.get("name"),
+            text=object_data.get("text"),
+            cooking_time=object_data.get("cooking_time"),
+            image=object_data.get("image"),
+            author_id=object_data.get("author_id"),
         )
         recipe.full_clean()
         recipe.save()
