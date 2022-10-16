@@ -34,7 +34,6 @@ class RecipeFilter(filters.FilterSet):
             "author",
         )
 
-    @staticmethod
     def if_user_is_anonymous(func):
         def check_user(self, queryset, name, value, *args, **kwargs):
             if self.request.user.is_anonymous:
