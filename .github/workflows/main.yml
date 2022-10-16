@@ -71,8 +71,8 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           sudo docker-compose stop
-          sudo docker image prune --all --force
           sudo docker-compose rm -fs backend
+          sudo docker rmi -f vaniamaksimov/foodgramprojectreact 
           touch .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > .env
           echo "ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}" >> .env
