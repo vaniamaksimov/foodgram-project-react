@@ -23,19 +23,15 @@ class Command(BaseCommand):
     help = "Заполнение базы данных из CSV файла"
 
     def handle(self, *args, **options):
-        try:
-            user_processing()
-            subscription_processing()
-            cart_processing()
-            tag_processing()
-            ingredient_processing()
-            recipe_processing()
-            cart_item_processing()
-            favoriterecipe_processing()
-        except Exception as e:
-            print(e)
-        finally:
-            print("database updated")
+        user_processing()
+        subscription_processing()
+        cart_processing()
+        tag_processing()
+        ingredient_processing()
+        recipe_processing()
+        cart_item_processing()
+        favoriterecipe_processing()
+        print("database was updated")
 
 
 def user_processing():
@@ -56,7 +52,8 @@ def user_processing():
                     "last_name": row[9],
                     "email": row[10],
                 }
-                add_to_database(object_data=user, model=User)
+                with transaction.atomic():
+                    add_to_database(object_data=user, model=User)
     pass
 
 
@@ -72,7 +69,10 @@ def subscription_processing():
                     "user_id": row[1],
                     "author_id": row[2],
                 }
-                add_to_database(object_data=subscripion, model=Subscription)
+                with transaction.atomic():
+                    add_to_database(
+                        object_data=subscripion, model=Subscription
+                    )
     pass
 
 
@@ -87,7 +87,8 @@ def cart_processing():
                 cart = {
                     "user_id": row[1],
                 }
-                add_to_database(object_data=cart, model=Cart)
+                with transaction.atomic():
+                    add_to_database(object_data=cart, model=Cart)
     pass
 
 
@@ -106,7 +107,8 @@ def tag_processing():
                     "name": row[1],
                     "color": row[2],
                 }
-                add_to_database(object_data=tag, model=Tag)
+                with transaction.atomic():
+                    add_to_database(object_data=tag, model=Tag)
     pass
 
 
@@ -122,7 +124,8 @@ def ingredient_processing():
                     "name": row[0],
                     "measurement_unit": row[1],
                 }
-                add_to_database(object_data=ingredient, model=Ingredient)
+                with transaction.atomic():
+                    add_to_database(object_data=ingredient, model=Ingredient)
     pass
 
 
@@ -141,7 +144,8 @@ def recipe_processing():
                     "image": row[4],
                     "author_id": row[5],
                 }
-                add_to_database(object_data=recipe, model=Recipe)
+                with transaction.atomic():
+                    add_to_database(object_data=recipe, model=Recipe)
     pass
 
 
@@ -157,7 +161,8 @@ def cart_item_processing():
                     "cart_id": row[1],
                     "recipe_id": row[2],
                 }
-                add_to_database(object_data=cart_item, model=CartItem)
+                with transaction.atomic():
+                    add_to_database(object_data=cart_item, model=CartItem)
     pass
 
 
@@ -173,13 +178,13 @@ def favoriterecipe_processing():
                     "recipe_id": row[1],
                     "user_id": row[2],
                 }
-                add_to_database(
-                    object_data=favorite_recipe, model=FavoriteRecipe
-                )
+                with transaction.atomic():
+                    add_to_database(
+                        object_data=favorite_recipe, model=FavoriteRecipe
+                    )
     pass
 
 
-@transaction.atomic
 def add_to_database(object_data, model):
     """Create objects in database"""
     if issubclass(model, User):
@@ -204,8 +209,9 @@ def add_to_database(object_data, model):
         recipe = model(**object_data)
         recipe.full_clean()
         recipe.save()
-        create_recipe_ingredients(recipe=recipe)
-        create_recipe_tags(recipe=recipe)
+        with transaction.atomic():
+            create_recipe_ingredients(recipe=recipe)
+            create_recipe_tags(recipe=recipe)
         return
     elif issubclass(model, CartItem):
         cart_item = model(
