@@ -1,17 +1,17 @@
 from django.contrib import admin
 
-from .models import Cart, Cart_item
+from .models import Cart, CartItem
 
 
-class cartmodelsAdmin(admin.ModelAdmin):
+class CartModelsAdmin(admin.ModelAdmin):
     list_display = ("user",)
     search_fields = ("user",)
 
 
-class cartitemmodelsAdmin(admin.ModelAdmin):
+class CartItemModelsAdmin(admin.ModelAdmin):
     list_display = ("cart", "recipe")
     list_filter = ("cart",)
 
 
-admin.site.register(Cart, cartmodelsAdmin)
-admin.site.register(Cart_item, cartitemmodelsAdmin)
+admin.site.register(Cart, CartModelsAdmin)
+admin.site.register(CartItem, CartItemModelsAdmin)

@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Subscription, User
 
 
-class usermodelsAdmin(UserAdmin):
+class UserModelsAdmin(UserAdmin):
     list_filter = (
         "is_staff",
         "is_superuser",
@@ -15,11 +15,11 @@ class usermodelsAdmin(UserAdmin):
     )
 
 
-class subscriptionmodelsAdmin(admin.ModelAdmin):
+class SubscriptionModelsAdmin(admin.ModelAdmin):
     list_display = ("user", "author")
     search_fields = ("user",)
     list_filter = ("user", "author")
 
 
-admin.site.register(User, usermodelsAdmin)
-admin.site.register(Subscription, subscriptionmodelsAdmin)
+admin.site.register(User, UserModelsAdmin)
+admin.site.register(Subscription, SubscriptionModelsAdmin)

@@ -20,18 +20,18 @@ class RecipeIngredientInLine(admin.TabularInline):
     extra = 1
 
 
-class tagmodelsAdmin(admin.ModelAdmin):
+class TagModelsAdmin(admin.ModelAdmin):
     list_display = ("name", "color", "slug")
     search_fields = ("name",)
 
 
-class ingredientmodelsAdmin(admin.ModelAdmin):
+class IngredientModelsAdmin(admin.ModelAdmin):
     list_display = ("name", "measurement_unit")
     search_fields = ("name",)
     list_filter = ("name",)
 
 
-class recipemodelsAdmin(admin.ModelAdmin):
+class RecipeModelsAdmin(admin.ModelAdmin):
     readonly_fields = ("times_in_favorite",)
     list_display = ("name", "author")
     search_fields = ("name", "author")
@@ -42,12 +42,12 @@ class recipemodelsAdmin(admin.ModelAdmin):
         return FavoriteRecipe.objects.filter(recipe=obj.id).count()
 
 
-class favoriterecipemodelsAdmin(admin.ModelAdmin):
+class FavoriteRecipeModelsAdmin(admin.ModelAdmin):
     list_display = ("user", "recipe")
     list_filter = ("user", "recipe")
 
 
-admin.site.register(Tag, tagmodelsAdmin)
-admin.site.register(Ingredient, ingredientmodelsAdmin)
-admin.site.register(Recipe, recipemodelsAdmin)
-admin.site.register(FavoriteRecipe, favoriterecipemodelsAdmin)
+admin.site.register(Tag, TagModelsAdmin)
+admin.site.register(Ingredient, IngredientModelsAdmin)
+admin.site.register(Recipe, RecipeModelsAdmin)
+admin.site.register(FavoriteRecipe, FavoriteRecipeModelsAdmin)

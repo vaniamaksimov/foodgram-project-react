@@ -14,7 +14,7 @@ from app.models import (
     RecipeTag,
     Tag,
 )
-from cart.models import Cart, Cart_item
+from cart.models import Cart, CartItem
 from users.models import Subscription
 
 User = get_user_model()
@@ -158,7 +158,7 @@ def cart_item_processing():
                     "cart_id": row[1],
                     "recipe_id": row[2],
                 }
-                add_to_database(object_data=cart_item, model=Cart_item)
+                add_to_database(object_data=cart_item, model=CartItem)
     pass
 
 
@@ -208,7 +208,7 @@ def add_to_database(object_data, model):
         create_recipe_ingredients(recipe=recipe)
         create_recipe_tags(recipe=recipe)
         return
-    elif issubclass(model, Cart_item):
+    elif issubclass(model, CartItem):
         cart_item = model(
             cart_id=object_data.get("cart_id"),
             recipe_id=object_data.get("recipe_id"),

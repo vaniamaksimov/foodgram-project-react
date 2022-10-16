@@ -22,7 +22,7 @@ class Cart(models.Model):
         return f"Корзина пользователя {self.user.username}"
 
 
-class Cart_item(models.Model):
+class CartItem(models.Model):
     cart = models.ForeignKey(
         Cart,
         on_delete=models.CASCADE,

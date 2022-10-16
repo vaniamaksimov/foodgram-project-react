@@ -20,7 +20,7 @@ from .serializers import (
     UserSubscriptionSerializer,
 )
 from app.models import FavoriteRecipe, Ingredient, Recipe, Tag
-from cart.models import Cart, Cart_item
+from cart.models import Cart, CartItem
 from core.filters import IngredientFilter, RecipeFilter
 from core.generics import get_object_or_400, get_pdf
 from core.pagination import RecipePagination
@@ -128,7 +128,7 @@ class RecipeViewSet(ModelViewSet):
         recipe = get_object_or_404(Recipe, id=id)
         cart, created = Cart.objects.get_or_create(user=user)
         if self.request.method == "POST":
-            cart_item, _created = Cart_item.objects.get_or_create(
+            cart_item, _created = CartItem.objects.get_or_create(
                 cart=cart, recipe=recipe
             )
             if not _created:
@@ -141,7 +141,7 @@ class RecipeViewSet(ModelViewSet):
             )
             return Response(data=serializer.data)
         if self.request.method == "DELETE":
-            cart_item = get_object_or_400(Cart_item, recipe=recipe, cart=cart)
+            cart_item = get_object_or_400(CartItem, recipe=recipe, cart=cart)
             cart_item.delete()
             return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 

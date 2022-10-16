@@ -3,13 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import exception_handler, set_rollback
 
 
-class Http400(Exception):
+class Http400Error(Exception):
     pass
 
 
 def custom_exception_handler(exc, context):
-    response = exception_handler(exc=exc, context=context)
-    if isinstance(exc, Http400):
+    if isinstance(exc, Http400Error):
         exc = ValidationError()
         data = {"errors": exc.detail}
         set_rollback()
@@ -17,4 +16,4 @@ def custom_exception_handler(exc, context):
             data,
             status=exc.status_code,
         )
-    return response
+    return exception_handler(exc=exc, context=context)

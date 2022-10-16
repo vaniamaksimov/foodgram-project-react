@@ -11,7 +11,7 @@ from reportlab.pdfgen import canvas
 from rest_framework.validators import ValidationError
 
 from app.models import RecipeIngredient
-from core.exceptions import Http400
+from core.exceptions import Http400Error
 
 User = get_user_model()
 
@@ -41,7 +41,9 @@ def get_object_or_400(klass, *args, **kwargs):
         ValueError,
         ValidationError,
     ):
-        raise Http400(f"Не найден объект {queryset.model._meta.object_name}")
+        raise Http400Error(
+            f"Не найден объект {queryset.model._meta.object_name}"
+        )
 
 
 def get_pdf(user, cart):
